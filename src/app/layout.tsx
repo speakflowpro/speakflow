@@ -1,63 +1,59 @@
-import type { Metadata } from "next";
-import "./globals.css";
+// src/app/chat/page.tsx
+"use client";
 
-export const metadata: Metadata = {
-  title: "SpeakFlow",
-  description: "AI чат за вербална комуникация",
-};
+import { useState } from "react";
+import { FaMicrophone, FaRegPaperPlane } from "react-icons/fa";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Chat() {
+  const [messages, setMessages] = useState([
+    { text: "Здравей! Как мога да ти помогна днес?", sender: "ai" },
+  ]);
+  const [input, setInput] = useState("");
+
+  const handleSendMessage = () => {
+    if (input.trim() === "") return;
+    setMessages([...messages, { text: input, sender: "user" }]);
+    setInput(""); // Изчистваме полето
+  };
+
   return (
-    <html lang="bg">
-      <body className="flex min-h-screen bg-gray-900 text-white">
-        {/* Sidebar */}
-        <aside className="w-64 bg-gray-800 p-6 border-r border-gray-700">
-          {/* Заглавие */}
-          <h2 className="text-xl font-bold text-gray-300 mb-6">SpeakFlow</h2>
+    <div className="flex flex-col h-screen">
+      {/* Заглавие */}
+      <header className="p-4 border-b border-gray-700 text-center text-lg font-bold">
+        Чат с AI
+      </header>
 
-          {/* Меню */}
-          <nav>
-            <ul className="space-y-4">
-              <li>
-                <a href="/chat" className="flex items-center space-x-2 p-3 rounded-md hover:bg-gray-700 transition">
-                  🗨️ <span>Чат</span>
-                </a>
-              </li>
-              <li>
-                <a href="/projects" className="flex items-center space-x-2 p-3 rounded-md hover:bg-gray-700 transition">
-                  📁 <span>Проекти</span>
-                </a>
-              </li>
-              <li>
-                <a href="/settings" className="flex items-center space-x-2 p-3 rounded-md hover:bg-gray-700 transition">
-                  ⚙️ <span>Настройки</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
-
-          {/* История на разговорите */}
-          <div className="mt-6">
-            <h3 className="text-gray-400 text-sm mb-2">История</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li className="text-sm p-2 rounded-md hover:bg-gray-700 transition cursor-pointer">
-                Умения в комуникацията
-              </li>
-              <li className="text-sm p-2 rounded-md hover:bg-gray-700 transition cursor-pointer">
-                Безплатни AI инструменти
-              </li>
-              <li className="text-sm p-2 rounded-md hover:bg-gray-700 transition cursor-pointer">
-                Среща в Прага
-              </li>
-            </ul>
+      {/* Чат прозорец */}
+      <div className="flex-1 p-4 overflow-y-auto bg-gray-900">
+        {messages.map((msg, index) => (
+          <div key={index} className={`mb-2 flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
+            <div
+              className={`p-3 rounded-lg max-w-xs ${
+                msg.sender === "user" ? "bg-blue-600 text-white" : "bg-gray-700 text-white"
+              }`}
+            >
+              {msg.text}
+            </div>
           </div>
-        </aside>
+        ))}
+      </div>
 
-        {/* Основно съдържание */}
-        <main className="flex-1 p-6">
-          {children ? children : <p className="text-center text-gray-400">Зареждане...</p>}
-        </main>
-      </body>
-    </html>
+      {/* Контролен панел */}
+      <div className="p-4 border-t border-gray-700 flex items-center bg-gray-800">
+        <input
+          type="text"
+          className="flex-1 p-2 bg-gray-700 text-white rounded-md focus:outline-none"
+          placeholder="Напишете съобщение..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+        <button onClick={handleSendMessage} className="ml-2 p-2 bg-blue-600 hover:bg-blue-700 rounded-md">
+          <FaRegPaperPlane />
+        </button>
+        <button className="ml-2 p-2 bg-red-600 hover:bg-red-700 rounded-full">
+          <FaMicrophone />
+        </button>
+      </div>
+    </div>
   );
 }
